@@ -132,4 +132,5 @@ dmypy.json
 .idea
 
 # папки со статикой и медиа
-media/
+backend/foodgram/media/
+backend/foodgram/recipes/images
