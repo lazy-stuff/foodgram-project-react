@@ -58,7 +58,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
+db.sqlite3_new
 db.sqlite3-journal
 
 # Flask stuff:
@@ -130,3 +130,6 @@ dmypy.json
 
 # .idea
 .idea
+
+# папки со статикой и медиа
+media/
