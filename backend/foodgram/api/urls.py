@@ -18,6 +18,5 @@ api_router.register('recipes', RecipeViewSet),
 
 urlpatterns = [
     path('', include(api_router.urls)),
-    path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]

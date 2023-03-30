@@ -19,17 +19,17 @@ from recipes.models import (
 )
 from .serializers import (
     FavoritesSerializer,
-    FollowSerializer,
     FollowReadSerializer,
+    FollowSerializer,
     IngredientsSerializer,
     RecipeCreateSerializer,
     RecipeReadSerializer,
-    TagSerializer,
-    ShoppingCartSerializer
+    ShoppingCartSerializer,
+    TagSerializer
 )
 from .filters import IngredientsFilter, RecipesFilter
-from .permissions import IsAdminOrReadOnly, IsOwner, IsAuthorOrReadOnly
-from .pagination import LimitPageNumberPagination, LimitFollowPagination
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsOwner
+from .pagination import LimitPageNumberPagination
 from users.models import CustomUser, Follow
 
 
@@ -38,36 +38,40 @@ class UserViewSet(DjoserUserViewSet):
 
     @action(
             methods=['get'], detail=False,
-            permission_classes=[IsAuthenticated],
-            pagination_class=LimitFollowPagination
+            permission_classes=[IsAuthenticated]
         )
     def subscriptions(self, request):
-        user = self.request.user
+        user = request.user
+        self.pagination_class = LimitPageNumberPagination
         users = CustomUser.objects.filter(following__user=user)
+        paginated_data = self.paginate_queryset(users)
         serializer = FollowReadSerializer(
-            users, many=True, context={'request': request}
+            data=paginated_data, many=True, context={'request': request}
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer.is_valid()
+        paginated_result = self.get_paginated_response(serializer.data)
+        return paginated_result
 
     @action(
             methods=['post', 'delete'], detail=True,
-            permission_classes=[IsAuthenticated],
-            pagination_class=LimitPageNumberPagination
+            permission_classes=[IsAuthenticated]
         )
-    def subscribe(self, request, id):
-        user = self.request.user
+    def subscribe(self, request, **kwargs):
+        user = request.user
+        id = self.kwargs.get('pk')
         author = get_object_or_404(CustomUser, id=id)
         serializer = FollowSerializer(data={
-                                          'user': user.id,
-                                          'author': id
-                                          }
+                                          'user': user.follower,
+                                          'author': author
+                                          },
+                                      context={'request': request}
                                       )
         if request.method == 'POST':
             serializer.is_valid(raise_exception=True)
             serializer.save(user=user)
             serializer = FollowReadSerializer(author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        subscription = get_object_or_404(Follow, user=user, author__id=id)
+        subscription = get_object_or_404(Follow, user=user, author=author)
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -75,17 +79,17 @@ class UserViewSet(DjoserUserViewSet):
 class TagsViewSet(ReadOnlyModelViewSet):
     """ViewSet for tags/ """
 
-    permission_classes = (IsAdminOrReadOnly,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class IngredientsViewSet(ReadOnlyModelViewSet):
     """ViewSet for ingredients/ """
 
-    permission_classes = (AllowAny,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsSerializer
+    permission_classes = (AllowAny,)
     filter_backends = (IngredientsFilter,)
     search_fields = ('^name',)
 
@@ -159,9 +163,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient_id__name',
             'ingredient_id__measurement_unit'
         ).order_by('ingredient_id__name').annotate(total=Sum('amount'))
-        shopping_cart = ('Список покупок: \n')
+        shopping_cart = list()
+        shopping_cart.append('Список покупок: \n')
         for ingredient in ingredients:
-            shopping_cart += ''.join(
+            shopping_cart.append(
                 f'{ingredient["ingredient_id__name"]} - '
                 f'{ingredient["total"]} '
                 f'{ingredient["ingredient_id__measurement_unit"]} \n'

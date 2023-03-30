@@ -130,6 +130,12 @@ dmypy.json
 
 # .idea
 .idea
+.DS_Store
+.AppleDouble
+.LSOverride
+
+.vscode/
+*.code-workspace
 
 # папки со статикой и медиа
 backend/foodgram/media/

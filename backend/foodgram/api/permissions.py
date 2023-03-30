@@ -1,4 +1,3 @@
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
@@ -8,14 +7,8 @@ class IsAuthorOrReadOnly(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        else:
-            if obj.author != request.user:
-                raise PermissionDenied(
-                    'Доступ к редактированию чужого контента закрыт.'
-                )
-        return True
+        return (request.method in SAFE_METHODS
+                or obj.author == request.user)
 
 
 class IsAdminOrReadOnly(BasePermission):

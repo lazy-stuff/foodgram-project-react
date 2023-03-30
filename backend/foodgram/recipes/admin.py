@@ -31,11 +31,33 @@ class RecipeAdmit(admin.ModelAdmin):
 @admin.register(Ingredient)
 class IngridientAdmit(admin.ModelAdmin):
     """Admin model for Ingredient."""
-    list_display = ('name', 'measurement_unit')
+    list_display = ('name', 'measurement_unit',)
     list_filter = ('name',)
 
 
-admin.site.register(Cart)
-admin.site.register(Favorite)
-admin.site.register(IngredientAmount)
-admin.site.register(Tag)
+@admin.register(IngredientAmount)
+class IngridientAmountAdmit(admin.ModelAdmin):
+    """Admin model for IngredientAmount."""
+    list_display = ('recipe', 'ingredient', )
+    list_filter = ('recipe',)
+
+
+@admin.register(Tag)
+class TagAdmit(admin.ModelAdmin):
+    """Admin model for Tag."""
+    list_display = ('name', 'color', 'slug',)
+    list_filter = ('name',)
+
+
+@admin.register(Favorite)
+class FavoriteAdmit(admin.ModelAdmin):
+    """Admin model for Favorite."""
+    list_display = ('user', 'recipe',)
+    list_filter = ('user',)
+
+
+@admin.register(Cart)
+class CartAdmit(admin.ModelAdmin):
+    """Admin model for Favorite."""
+    list_display = ('user', 'recipe',)
+    list_filter = ('user',)

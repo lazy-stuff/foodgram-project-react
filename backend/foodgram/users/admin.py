@@ -9,4 +9,9 @@ class CustomUserAdmit(admin.ModelAdmin):
     list_filter = ('username', 'email', )
 
 
-admin.site.register(Follow)
+@admin.register(Follow)
+class FollowAdmit(admin.ModelAdmin):
+    """Admin model for Follow."""
+
+    list_display = ('author', 'user', )
+    list_filter = ('author', )

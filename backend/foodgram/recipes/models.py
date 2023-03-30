@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -35,9 +36,8 @@ class Tag(models.Model):
         max_length=30,
         unique=True
     )
-    color = models.CharField(
+    color = ColorField(
         verbose_name='Цвет тега',
-        max_length=7,
         unique=True
     )
     slug = models.SlugField(
@@ -90,13 +90,13 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1,
                     message='Минимальное время приготовления - 1 мин.')]
     )
-    pub_date = models.DateField(
+    pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True
     )
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ['-pub_date']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
