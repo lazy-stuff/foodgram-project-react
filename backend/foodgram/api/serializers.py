@@ -1,17 +1,10 @@
 from django.db import transaction
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
+from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
+                            Recipe, Tag)
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
-
-from recipes.models import (
-    Cart,
-    Favorite,
-    Ingredient,
-    IngredientAmount,
-    Recipe,
-    Tag
-)
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from users.models import CustomUser, Follow
 
 
@@ -221,15 +214,13 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return data
 
     def create_ingredients(self, ingredients, recipe):
-        return IngredientAmount.objects.bulk_create([
-                    IngredientAmount(
-                                     recipe=recipe,
-                                     amount=ingredient['amount'],
-                                     ingredient=Ingredient.objects.get(
-                                                    id=ingredient['id']
-                                                    )
-                                    ) for ingredient in ingredients]
-                )
+        return IngredientAmount.objects.bulk_create(
+            [IngredientAmount(
+                recipe=recipe,
+                amount=ingredient['amount'],
+                ingredient=Ingredient.objects.get(id=ingredient['id'])
+            ) for ingredient in ingredients]
+        )
 
     @transaction.atomic
     def create(self, validated_data):

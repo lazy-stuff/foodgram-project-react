@@ -1,13 +1,6 @@
 from django.contrib import admin
 
-from .models import (
-    Cart,
-    Favorite,
-    Ingredient,
-    IngredientAmount,
-    Recipe,
-    Tag
-)
+from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 
 class IngredientInlineAdmin(admin.TabularInline):
@@ -24,8 +17,7 @@ class RecipeAdmit(admin.ModelAdmin):
     inlines = (IngredientInlineAdmin,)
 
     def is_in_favorites(self, obj):
-        result = Recipe.objects.filter(favorite__recipe_id=obj).count()
-        return result
+        return Recipe.objects.filter(favorite__recipe_id=obj).count()
 
 
 @admin.register(Ingredient)

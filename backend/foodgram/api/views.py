@@ -1,45 +1,33 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django_filters import rest_framework as filters
 from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
 from djoser.views import UserViewSet as DjoserUserViewSet
+from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
+                            Recipe, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from recipes.models import (
-    Cart,
-    Favorite,
-    Ingredient,
-    IngredientAmount,
-    Recipe,
-    Tag
-)
-from .serializers import (
-    FavoritesSerializer,
-    FollowReadSerializer,
-    FollowSerializer,
-    IngredientsSerializer,
-    RecipeCreateSerializer,
-    RecipeReadSerializer,
-    ShoppingCartSerializer,
-    TagSerializer
-)
-from .filters import IngredientsFilter, RecipesFilter
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsOwner
-from .pagination import LimitPageNumberPagination
 from users.models import CustomUser, Follow
+
+from .filters import IngredientsFilter, RecipesFilter
+from .pagination import LimitPageNumberPagination
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly, IsOwner
+from .serializers import (FavoritesSerializer, FollowReadSerializer,
+                          FollowSerializer, IngredientsSerializer,
+                          RecipeCreateSerializer, RecipeReadSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 
 
 class UserViewSet(DjoserUserViewSet):
     """ViewSet for users/ """
 
     @action(
-            methods=['get'], detail=False,
-            permission_classes=[IsAuthenticated]
-        )
+        methods=['get'], detail=False,
+        permission_classes=[IsAuthenticated]
+    )
     def subscriptions(self, request):
         user = request.user
         self.pagination_class = LimitPageNumberPagination
@@ -49,21 +37,20 @@ class UserViewSet(DjoserUserViewSet):
             data=paginated_data, many=True, context={'request': request}
         )
         serializer.is_valid()
-        paginated_result = self.get_paginated_response(serializer.data)
-        return paginated_result
+        return self.get_paginated_response(serializer.data)
 
     @action(
-            methods=['post', 'delete'], detail=True,
-            permission_classes=[IsAuthenticated]
-        )
+        methods=['post', 'delete'], detail=True,
+        permission_classes=[IsAuthenticated]
+    )
     def subscribe(self, request, **kwargs):
         user = request.user
         id = self.kwargs.get('pk')
         author = get_object_or_404(CustomUser, id=id)
         serializer = FollowSerializer(data={
-                                          'user': user.follower,
-                                          'author': author
-                                          },
+                                      'user': user.follower,
+                                      'author': author
+                                      },
                                       context={'request': request}
                                       )
         if request.method == 'POST':
@@ -109,8 +96,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeCreateSerializer
 
     @action(
-            methods=['post'], detail=True,
-            permission_classes=[IsAuthenticated]
+        methods=['post'], detail=True,
+        permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
@@ -131,8 +118,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            methods=['post'], detail=True,
-            permission_classes=[IsAuthenticated]
+        methods=['post'], detail=True,
+        permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
@@ -153,8 +140,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            methods=['get'], detail=False,
-            permission_classes=[IsOwner]
+        methods=['get'], detail=False,
+        permission_classes=[IsOwner]
     )
     def download_shopping_cart(self, request):
         ingredients = IngredientAmount.objects.filter(

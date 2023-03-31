@@ -1,8 +1,7 @@
 from colorfield.fields import ColorField
-from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 User = get_user_model()
 
@@ -126,7 +125,7 @@ class IngredientAmount(models.Model):
                               message='Минимальное количество - 1.'),
             MaxValueValidator(10000,
                               message='Максимальное количество - 10000.')
-                    ]
+        ]
     )
 
     class Meta:
