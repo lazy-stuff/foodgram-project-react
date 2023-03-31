@@ -22,9 +22,7 @@ services:
       - .env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: lazystuff/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
 
