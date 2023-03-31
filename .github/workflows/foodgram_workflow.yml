@@ -40,9 +40,9 @@ jobs:
         uses: docker/build-push-action@v2 
         with:
           push: true
-          context: ./backend/
+          context: ./backend/foodgram/
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:v1.1
-          file: ./backend/Dockerfile
+          file: ./backend/foodgram/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
