@@ -67,7 +67,6 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
 
             sudo docker-compose stop
-            sudo docker-compose down -v
             sudo docker-compose rm backend
             sudo docker-compose up -d --build
 
