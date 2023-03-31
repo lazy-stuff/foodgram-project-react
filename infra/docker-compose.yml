@@ -12,7 +12,6 @@ services:
     image: lazystuff/foodgram:v1.1
     expose:
       - 8000
-    restart: always
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
