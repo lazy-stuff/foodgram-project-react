@@ -24,7 +24,7 @@ services:
   frontend:
     image: lazystuff/foodgram_frontend:latest
     volumes:
-      - frontend-value:./frontend/app/result_build/
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
 
@@ -46,4 +46,3 @@ volumes:
   data_value:
   static_value:
   media_value:
-  frontend-value:
