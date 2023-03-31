@@ -1,5 +1,6 @@
 # Foodgram project
  
+![Django workflow](https://github.com/lazy-stuff/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 ##### Дипломная работа по программе Python-разработчик (Я.Практикум).
 
