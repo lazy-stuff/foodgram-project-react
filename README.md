@@ -2,59 +2,64 @@
  
 ![Django workflow](https://github.com/lazy-stuff/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
-##### Дипломная работа по программе Python-разработчик (Я.Практикум).
+### Дипломная работа по программе Python-разработчик (Я.Практикум).
 
-### Сайт находится по адресу:
+Приложение «Продуктовый помощник» - это сайт, на котором пользователи могут размещать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволяет пользователям скачивать список продуктов, которые нужно купить для приготовления выбранных блюд.
+
+##### [Ссылка на сайт](http://lazystuff-project.ddns.net)
+##### [Админка](http://lazystuff-project.ddns.net/admin/)
+##### [Документация API](http://lazystuff-project.ddns.net/api/docs/)
+
 ```
-158.160.23.185/
-
+email: superuser@mail.ru
+password: admin
 ```
 
-### Как запустить проект:
+#### Как запустить проект:
 
 Клонировать репозиторий и перейти в него в командной строке:
 
 ```
 $ git clone https://github.com/lazy-stuff/foodgram-project-react
-$ cd foodgram-project-react/backend
-
-```
-Cоздать и активировать виртуальное окружение:
-
-```
-$ python3 -m venv venv
-$ source venv/bin/activate
 ```
 
-Установить зависимости из файла requirements.txt:
+Перейти в директорию infra/:
 
 ```
-$ python3 -m pip install --upgrade pip
-$ pip install -r requirements.txt
+$ cd foodgram-project-react/infra/
 ```
-
-Перейти в папку foodgram/:
-
-```
-$ cd foodgram/
-```
-
-Выполнить миграции:
+Cоздать .env-файл для проекта.
+Шаблон заполнения:
 
 ```
-$ python3 manage.py migrate
+SECRET_KEY = 'p123456'
+
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=data_base
+POSTGRES_USER=data_base
+POSTGRES_PASSWORD=data_base
+DB_HOST=db
+DB_PORT=1234
 ```
 
-Заполнить базу теестовыми данными:
+Запустить контейнеры:
 
 ```
-$ python3 manage.py load_data
+$ docker-compose up -d --build 
 ```
 
-Запустить проект:
+Выполнить миграции, создать суперпользователя и собрать статику:
 
 ```
-$ python3 manage.py runserver
+$ docker-compose exec backend python manage.py migrate
+$ docker-compose exec backend python manage.py createsuperuser
+$ docker-compose exec backend python manage.py collectstatic --no-input 
+```
+
+Заполнить базу данных:
+
+```
+$ docker-compose exec backend python manage.py load_data 
 ```
 
 #### Технологии
@@ -63,6 +68,8 @@ $ python3 manage.py runserver
 
 * [Django REST framework](https://www.django-rest-framework.org)
 
-#### Автор
+* [Docker](https://www.docker.com)
+
+#### Авторы
 
 **Настя Лунегова** - *GitHub* - *[lazy-stuff](https://github.com/lazy-stuff)*
