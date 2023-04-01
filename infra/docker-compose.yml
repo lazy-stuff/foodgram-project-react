@@ -10,8 +10,6 @@ services:
 
   backend:
     image: lazystuff/foodgram:v1.1
-    expose:
-      - 8000
     restart: always
     volumes:
       - static_value:/app/static/
